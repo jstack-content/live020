@@ -1,0 +1,36 @@
+service: live020
+frameworkVersion: '3'
+
+plugins:
+  - serverless-esbuild
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  region: us-east-1
+  runtime: nodejs20.x
+  deploymentMethod: direct
+  architecture: arm64
+
+custom:
+  esbuild:
+  bundle: true
+  minify: true
+  sourcemap: false
+  target: node20
+  exclude:
+    - '@aws-sdk/*'
+  define:
+    require.resolve: undefined
+  platform: node
+  concurrency: 10
+
+functions:
+  hello:
+    handler: src/functions/hello.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /hello
